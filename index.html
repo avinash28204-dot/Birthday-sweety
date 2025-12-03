@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Happy Birthday</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    :root {
+      --pink:#ff8adf;
+      --blue:#7aa6ff;
+      --violet:#b58cff;
+      --text:#fdfaff;
+      --bg:#050516;
+    }
+
+    body {
+      font-family:'Poppins',system-ui,sans-serif;
+      background: radial-gradient(circle at top, #3c2b7a 0, #050516 45%, #02010a 100%);
+      color:var(--text);
+      overflow:hidden;
+    }
+
+    /* Soft glowing blobs */
+    .blob {
+      position:fixed;
+      width:40vmax;height:40vmax;
+      border-radius:50%;
+      filter:blur(40px);
+      opacity:0.45;
+      z-index:-3;
+    }
+    .blob.one{background:#ff8adf;top:-10%;left:-10%;animation:blobMove1 18s infinite alternate ease-in-out;}
+    .blob.two{background:#7aa6ff;bottom:-15%;right:-5%;animation:blobMove2 22s infinite alternate ease-in-out;}
+    @keyframes blobMove1{
+      from{transform:translate(0,0);}
+      to{transform:translate(40px,40px);}
+    }
+    @keyframes blobMove2{
+      from{transform:translate(0,0);}
+      to{transform:translate(-40px,-20px);}
+    }
+
+    /* ===== Butterflies ===== */
+    #butterfly-container{position:fixed;inset:0;pointer-events:none;z-index:-2;}
+    .butterfly{
+      position:fixed;
+      bottom:-8vh;
+      font-size:22px;
+      text-shadow:0 0 8px rgba(0,0,0,.8);
+      opacity:0;
+      animation-name:flyUp;
+      animation-timing-function:linear;
+      animation-iteration-count:infinite;
+    }
+    @keyframes flyUp{
+      0%   {transform:translateY(0) translateX(0) rotate(0deg);opacity:0;}
+      10%  {opacity:1;}
+      50%  {transform:translateY(-55vh) translateX(20px) rotate(10deg);}
+      100% {transform:translateY(-115vh) translateX(-10px) rotate(-10deg);opacity:0;}
+    }
+
+    /* ===== Center heading ===== */
+    .center{
+      position:fixed;top:0;left:0;right:0;
+      text-align:center;
+      padding-top:12vh;
+      pointer-events:none;
+    }
+    .headline{
+      font-size:2.4rem;
+      font-weight:600;
+      text-shadow:0 0 22px rgba(0,0,0,.9);
+      opacity:0;transform:translateY(15px);
+      transition:1.2s;
+    }
+    .headline span{
+      background:linear-gradient(120deg,var(--pink),var(--blue));
+      -webkit-background-clip:text;
+      color:transparent;
+    }
+    .subline{
+      font-size:1rem;margin-top:10px;
+      opacity:0;transform:translateY(10px);
+      transition:1.2s .25s;
+      max-width:90vw;margin-inline:auto;
+    }
+    body.started .headline{opacity:1;transform:translateY(0);}
+    body.started .subline{opacity:1;transform:translateY(0);}
+
+    /* ===== Character Cards ===== */
+    .character{
+      position:fixed;
+      left:50%;top:50%;
+      transform:translate(-50%,-50%) scale(.9);
+      background:rgba(7,8,25,.92);
+      padding:14px 20px;
+      border-radius:20px;
+      border:1px solid rgba(255,255,255,.35);
+      backdrop-filter:blur(18px);
+      box-shadow:0 18px 45px rgba(0,0,0,.9);
+      display:flex;
+      align-items:center;
+      gap:12px;
+      opacity:0;
+      transition:.6s;
+      max-width:90vw;
+      pointer-events:none;
+    }
+    .character.show{
+      opacity:1;
+      transform:translate(-50%,-50%) scale(1);
+      pointer-events:auto;
+    }
+
+    .character-icon{
+      width:70px;height:70px;
+      border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:2rem;
+      background:radial-gradient(circle at 20% 0,#fff,#ffd6ff);
+      box-shadow:0 16px 32px rgba(0,0,0,.9);
+      animation:float2 3s infinite ease-in-out;
+      flex-shrink:0;
+    }
+    @keyframes float2{
+      0%,100%{transform:translateY(0);}
+      50%{transform:translateY(-5px);}
+    }
+
+    .character-text{font-size:.9rem;max-width:240px;}
+    .tag{
+      font-size:.7rem;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      opacity:.7;
+      margin-bottom:4px;
+    }
+    .character-msg span{color:var(--pink);}
+
+    /* ===== Final "birds" section ===== */
+    .couple-wrap{
+      position:fixed;bottom:-50vh;left:50%;transform:translateX(-50%);
+      opacity:0;text-align:center;transition:1.6s;
+      max-width:94vw;
+    }
+    .couple-icon{
+      font-size:3.2rem;
+      text-shadow:0 0 25px rgba(0,0,0,.9);
+    }
+    .final-text{
+      background:rgba(7,8,25,.9);
+      padding:10px 16px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.32);
+      backdrop-filter:blur(14px);
+      margin-top:10px;
+      font-size:.95rem;
+      line-height:1.5;
+    }
+    .final-text span{color:var(--violet);}
+    body.finished .couple-wrap{opacity:1;bottom:12vh;}
+
+    /* ===== Click-through button ===== */
+    .step-btn-wrap{
+      position:fixed;
+      left:50%;
+      bottom:10vh;
+      transform:translateX(-50%) translateY(20px);
+      opacity:0;
+      transition:.6s;
+      pointer-events:none;
+    }
+    .step-btn-wrap.show{
+      opacity:1;
+      transform:translateX(-50%) translateY(0);
+      pointer-events:auto;
+    }
+    .step-btn{
+      padding:10px 24px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.6);
+      background:rgba(4,5,22,.9);
+      color:white;
+      font-size:.85rem;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      cursor:pointer;
+      backdrop-filter:blur(10px);
+    }
+
+    /* ===== Start Overlay ===== */
+    .start-overlay{
+      position:fixed;inset:0;
+      display:flex;align-items:center;justify-content:center;
+      flex-direction:column;text-align:center;
+      background:rgba(0,0,0,.55);backdrop-filter:blur(8px);
+      z-index:10;color:white;
+      padding:0 20px;
+    }
+    .start-btn{
+      margin-top:15px;padding:10px 26px;
+      border:none;border-radius:999px;
+      background:linear-gradient(135deg,var(--pink),var(--blue));
+      color:black;font-weight:600;
+      cursor:pointer;
+    }
+
+    .footer-note{
+      position:fixed;bottom:8px;left:50%;transform:translateX(-50%);
+      font-size:.7rem;opacity:.7;text-align:center;
+      pointer-events:none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Glowing blobs -->
+  <div class="blob one"></div>
+  <div class="blob two"></div>
+
+  <!-- Butterflies -->
+  <div id="butterfly-container"></div>
+
+  <!-- CENTER TEXT -->
+  <div class="center">
+    <div class="headline">
+      Happy Birthday <span id="crushName">My Sweety ❤️</span>
+    </div>
+    <div class="subline">
+      "You truly define the phrase, 'Aging like fine wine.' Happy Birthday."
+    </div>
+  </div>
+
+  <!-- HAMSTER MESSAGE -->
+  <div class="character" id="hamsterCard">
+    <div class="character-icon">🐹</div>
+    <div class="character-text">
+      <div class="tag">First message</div>
+      <div class="character-msg"><span>Something Something?</span></div>
+    </div>
+  </div>
+
+  <!-- RABBIT MESSAGE -->
+  <div class="character" id="rabbitCard">
+    <div class="character-icon">🐰</div>
+    <div class="character-text">
+      <div class="tag">Second message</div>
+      <div class="character-msg">
+        your all wishes comes true — <span>' Bas Smile kiya kar hamesha '</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- "BIRDS" FINAL (emoji) -->
+  <div class="couple-wrap" id="coupleWrap">
+    <div class="couple-icon">🕊️🕊️</div>
+    <div class="final-text">
+      <span>In English we say:</span><br>
+      You are the only one for me.<br><br>
+      <span>But in shayari...</span><br>
+      Roshan hai tujse mere dil ka jaha,<br>
+      Jo baat tujme hai woh kisi or mein kaha ...<br><br>
+      Happy Birthday Sweety 💜
+    </div>
+  </div>
+
+  <!-- CLICK HERE BUTTON -->
+  <div class="step-btn-wrap" id="stepBtnWrap">
+    <button class="step-btn" id="stepBtn">Tap to see first message</button>
+  </div>
+
+  <!-- START SCREEN -->
+  <div class="start-overlay" id="startOverlay">
+    <h2>Tap to start the surprise ✨</h2>
+    <p>Volume on rakho 🔊 (song ~30 sec)</p>
+    <button class="start-btn" id="startBtn">START</button>
+  </div>
+
+  <!-- MUSIC -->
+  <audio id="bgMusic">
+    <source src="music.mp3">
+  </audio>
+
+  <div class="footer-note">
+    ( Sweety i will always be there for you ✨ )
+  </div>
+
+  <script>
+    // Butterflies
+    const butterflyContainer = document.getElementById("butterfly-container");
+    const totalButterflies = 14;
+    for (let i = 0; i < totalButterflies; i++) {
+      const b = document.createElement("div");
+      b.className = "butterfly";
+      b.textContent = "🦋";
+      b.style.left = Math.random() * 100 + "vw";
+      b.style.animationDuration = (10 + Math.random() * 8) + "s";
+      b.style.animationDelay = (Math.random() * 10) + "s";
+      butterflyContainer.appendChild(b);
+    }
+
+    const startBtn = document.getElementById("startBtn");
+    const startOverlay = document.getElementById("startOverlay");
+    const bgMusic = document.getElementById("bgMusic");
+    const stepBtnWrap = document.getElementById("stepBtnWrap");
+    const stepBtn = document.getElementById("stepBtn");
+
+    startBtn.onclick = () => {
+      document.body.classList.add("started");
+      startOverlay.style.opacity = "0";
+      setTimeout(() => startOverlay.remove(), 600);
+      bgMusic.play().catch(() => {});
+      setTimeout(() => stepBtnWrap.classList.add("show"), 800);
+    };
+
+    // Click sequence
+    let step = 0;
+    const hamster = document.getElementById("hamsterCard");
+    const rabbit = document.getElementById("rabbitCard");
+
+    stepBtn.onclick = () => {
+      if (step === 0) {
+        hamster.classList.add("show");
+        stepBtn.textContent = "Tap to see next message";
+        step = 1;
+      } else if (step === 1) {
+        hamster.classList.remove("show");
+        rabbit.classList.add("show");
+        stepBtn.textContent = "Tap to see final note";
+        step = 2;
+      } else if (step === 2) {
+        rabbit.classList.remove("show");
+        document.body.classList.add("finished");
+        stepBtnWrap.classList.remove("show");
+        setTimeout(() => stepBtnWrap.style.display = "none", 600);
+        step = 3;
+      }
+    };
+
+    // Name with heart
+    const crushName = "My Sweety ❤️"; // yahan chahe to real naam daal de
+    document.getElementById("crushName").textContent = crushName;
+  </script>
+</body>
+</html>
